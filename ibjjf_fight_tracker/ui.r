@@ -9,6 +9,7 @@ shinyUI(
       tabPanel("Selected Fights", DT::dataTableOutput("selected_fights")),
       tabPanel("All Fights", DT::dataTableOutput("all_fights"))
     ),
+    uiOutput("links"),
     textOutput("latest_update")
   )
 )

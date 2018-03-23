@@ -5,6 +5,7 @@ library(dplyr)
 library(tidyr)
 library(readr)
 library(DT)
+library(glue)
 
 source("get_fight_order.R")
 
@@ -54,6 +55,14 @@ shinyServer(function(input, output, session) {
 
     read_csv("important_fights.csv") %>%
       clean_table()
+  })
+  
+  output$links <- renderUI({
+    urls <- sort(get_urls())
+    out <- lapply(seq_along(urls), function(d) {
+      tags$li(tags$a(glue("Order of fights (Day {d})"), href=urls[d]))
+    })
+    out <- c(list(tags$h4("IBJJF Links:")), list(tags$ul(out)))
   })
 
   output$latest_update <- renderText({
