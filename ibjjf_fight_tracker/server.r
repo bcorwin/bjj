@@ -68,7 +68,12 @@ shinyServer(function(input, output, session) {
   output$latest_update <- renderText({
     auto_refresh()
 
-    latest_update <- read_lines("latest_update.txt")
-    paste("Data last refreshed on", latest_update)
+    latest_update <- as.POSIXct(read_lines("latest_update.txt"), tz = "UTC")
+    data_lag <- round(difftime(Sys.time(), latest_update, units = "mins"), 1)
+    
+    attributes(latest_update)$tzone <- "America/Chicago"
+    
+    paste0("Data last refreshed ", data_lag, " min(s) ago (",
+          format(latest_update, format="on %b %d @ %H:%M %Z"), ").")
   })
 })
