@@ -128,3 +128,19 @@ refresh_data <- function() {
   write_csv(important_fights, "important_fights.csv")
   write_lines(latest_update, "latest_update.txt")
 }
+
+check_competitors <- function() {
+  require(readr)
+  require(dplyr)
+
+  selected_fights <- read_csv("important_fights.csv")
+  competitors <- get_competitors()
+
+  competitors %>%
+    left_join(selected_fights %>%
+                mutate(in_selected = TRUE), by = "division") %>%
+    filter(competitor1 == name || competitor2 == name) %>%
+    mutate(in_selected = !is.na(in_selected)) %>%
+    select(division, name, in_selected) %>%
+    filter(in_selected == FALSE)
+}
