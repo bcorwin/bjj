@@ -1,3 +1,5 @@
+options(shiny.sanitize.errors = FALSE)
+
 library(shiny)
 library(dplyr)
 library(tidyr)
@@ -22,12 +24,12 @@ clean_table <- function(in_table) {
       Gender,
       Skill,
       Weight
-    ) %>%
-    datatable(
-      rownames = FALSE,
-      filter = 'top',
-      list(order = list(list(0, 'asc'), list(1, 'asc')))
-    )
+    ) #%>%
+    # datatable(
+    #   rownames = FALSE,
+    #   filter = 'top',
+    #   list(order = list(list(0, 'asc'), list(1, 'asc')))
+    # )
 }
 
 shinyServer(function(input, output, session) {
