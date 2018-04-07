@@ -1,0 +1,4 @@
+# Cron job to run to update data
+# Run as shiny user by running:
+# crontab -e -u shiny
+*/1 * * * * cd /srv/shiny-server/bjj/ibjjf_fight_tracker; sh refresh.sh >> refresh.log
