@@ -1,3 +1,5 @@
+#options(shiny.sanitize.errors = FALSE)
+
 library(shiny)
 library(dplyr)
 library(tidyr)
@@ -34,11 +36,11 @@ shinyServer(function(input, output, session) {
 
   auto_refresh <- reactiveTimer(90000)
 
-  # observe({
-  #   auto_refresh()
-  #
-  #   refresh_data()
-  # })
+  observe({
+    auto_refresh()
+    #refresh_data()
+    print("Refreshing...")
+  })
 
   output$all_fights <- renderDataTable({
     auto_refresh()

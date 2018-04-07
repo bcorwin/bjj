@@ -1,3 +1,5 @@
+#options(shiny.sanitize.errors = FALSE)
+
 library(shiny)
 
 shinyUI(
