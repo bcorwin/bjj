@@ -3,8 +3,6 @@ library(dplyr)
 library(glue)
 library(RMySQL)
 
-# source("divisions_to_track.R")
-
 get_all_comp_ids <- function() {
   all_comp_urls <- read_html("http://ibjjf.com/championships/calendar/") %>%
     html_nodes("#content > div > table > tbody > tr > td > a") %>%
