@@ -1,7 +1,6 @@
 library(rvest)
 library(dplyr)
 library(glue)
-library(RMySQL)
 
 get_all_comp_ids <- function() {
   all_comp_urls <- read_html("http://ibjjf.com/championships/calendar/") %>%
@@ -104,14 +103,20 @@ get_results <- function(comp_id) {
     return(out)
   }) %>% bind_rows()
 }
-
-# Get all ids and get results and competitors
+paste(Sys.time(), "Starting new run...")
+paste(Sys.time(), "Getting list of competition ids...")
 all_comp_ids <- get_all_comp_ids()
 
+paste(Sys.time(), "Getting list of competitors...")
 all_comps <- lapply(all_comp_ids, get_competitors) %>%
   bind_rows()
 
+paste(Sys.time(), "Getting list of results...")
 all_results <- lapply(all_comp_ids, get_results) %>%
   bind_rows()
 
-save(all_comps, all_results, file = "ibjjf_competitors.RData")
+out_file <- glue("data/ibjjf_comp_data_{format(Sys.time(), format = '%Y%m%d_%H%M')}.RData")
+paste(Sys.time(), glue("Saving results to {out_file}..."))
+save(all_comps, all_results, file = out_file)
+
+paste(Sys.time(), "Done!")
