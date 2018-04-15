@@ -1,3 +1,9 @@
+# To do:
+# Combine outputs. Track when a person first signs up.
+# Be aware of division changes and open class showing up date of comps.
+# Analysis speed to sign up and comp outcomes (results)
+# Also look at which weight classes sign up for open class (heavier people?)xx
+
 library(rvest)
 library(dplyr)
 library(glue)
@@ -7,7 +13,8 @@ get_all_comp_ids <- function() {
     html_nodes("#content > div > table > tbody > tr > td > a") %>%
     html_attr("href")
 
-  sapply(all_comp_urls, get_comp_id)
+ out <- sapply(all_comp_urls, get_comp_id)
+ unique(out)
 }
 
 get_comp_id <- function(comp_url) {
