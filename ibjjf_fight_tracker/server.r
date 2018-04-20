@@ -57,13 +57,14 @@ shinyServer(function(input, output, session) {
     read_csv("important_fights.csv") %>%
       clean_table()
   })
-  
+
   output$links <- renderUI({
-    urls <- sort(get_urls())
-    out <- lapply(seq_along(urls), function(d) {
-      tags$li(tags$a(glue("Order of fights (Day {d})"), href=urls[d]))
+    comps <- get_competitions() %>%
+      mutate(name = paste0(competition, " (", date, ")"))
+    out <- lapply(seq(1, nrow(comps)), function(d) {
+      tags$li(tags$a(comps$name[d], href=comps$url[d]))
     })
-    out <- c(list(tags$h4("IBJJF Links:")), list(tags$ul(out)))
+    out <- c(list(tags$h4("Firhgt Order Links:")), list(tags$ul(out)))
   })
 
   output$latest_update <- renderText({
@@ -71,10 +72,10 @@ shinyServer(function(input, output, session) {
 
     latest_update <- as.POSIXct(read_lines("latest_update.txt"), tz = "UTC")
     data_lag <- round(difftime(Sys.time(), latest_update, units = "mins"), 1)
-    
+
     attributes(latest_update)$tzone <- "America/Chicago"
-    
+
     paste0("Data last refreshed ", data_lag, " min(s) ago (",
-          format(latest_update, format="on %b %d @ %H:%M %Z"), ").")
+          format(latest_update, format="%b %d @ %H:%M %Z"), ").")
   })
 })

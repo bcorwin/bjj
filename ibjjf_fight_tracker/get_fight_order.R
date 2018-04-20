@@ -7,14 +7,32 @@
 # day1 <- get_fight_order("http://www.bjjcompsystem.com/tournaments/888/tournament_days/140")
 # day2 <- get_fight_order("http://www.bjjcompsystem.com/tournaments/888/tournament_days/141")
 
-get_urls <- function() {
+process_division <- function(division,
+                             glue_format = "{age} / {gender} / {toupper(skill)} / {weight}") {
+  require(stringr)
+  require(glue)
+  age <- str_extract(division, "(Adult|Juvenile|Master \\d)")
+  gender <- str_extract(division, "(Female|Male)")
+  skill <- str_extract(division, "(?i)(BLACK|BROWN|PURPLE|BLUE|WHITE)")
+  weight <- str_extract(division, "Rooster|Light Feather|Feather|Light|Middle|Medium Heavy|Heavy|Super Heavy|Ultra Heavy")
+  as.character(glue(glue_format))
+}
+
+get_competitions <- function() {
   require(readr)
-  url_list <- read_lines("list_urls.txt")
+  comps <- read_csv("list_competitions.csv")
+}
+
+get_urls <- function() {
+  comps <- get_competitions()
+  url_list <- comps$url
 }
 
 get_competitors <- function() {
   require(readr)
-  competitors <- read_csv("list_competitors.csv")
+  require(dplyr)
+  competitors <- read_csv("list_competitors.csv") %>%
+    mutate(division = process_division(division))
 }
 
 get_fight_order <- function(order_url) {
@@ -139,7 +157,7 @@ check_competitors <- function() {
   competitors %>%
     left_join(selected_fights %>%
                 mutate(in_selected = TRUE), by = "division") %>%
-    filter(competitor1 == name || competitor2 == name) %>%
+    filter(competitor1 == name | competitor2 == name | is.na(in_selected)) %>%
     mutate(in_selected = !is.na(in_selected)) %>%
     select(division, name, in_selected) %>%
     filter(in_selected == FALSE)

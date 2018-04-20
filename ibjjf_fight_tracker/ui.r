@@ -1,5 +1,5 @@
 options(shiny.sanitize.errors = FALSE)
-Y
+
 library(shiny)
 library(DT)
 
