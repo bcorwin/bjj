@@ -13,8 +13,11 @@ get_all_comp_ids <- function() {
     html_nodes("#content > div > table > tbody > tr > td > a") %>%
     html_attr("href")
 
- out <- sapply(all_comp_urls, get_comp_id)
- unique(out)
+  all_comp_urls <- grep("^(http://)?(www.)?ibjjf.com/championship/",
+                        all_comp_urls, ignore.case = TRUE, value = TRUE)
+
+  out <- sapply(all_comp_urls, get_comp_id)
+  unique(out)
 }
 
 get_comp_id <- function(comp_url) {
@@ -65,9 +68,17 @@ get_competitors <- function(comp_id) {
     bind_rows()
 }
 
-get_results <- function(comp_id) {
+get_results <- function(comp_id, debug = FALSE) {
+  if(debug) print(comp_id)
   result_url <- "https://www.ibjjfdb.com/ChampionshipResults/{comp_id}/PublicResults"
-  comp_page <- read_html(glue(result_url))
+
+  tryCatch({
+    comp_page <- read_html(glue(result_url))
+  }, error = function(e) {
+    print(e)
+    return(data.frame())
+  })
+
 
   comp_name <- comp_page %>%
     html_nodes("#content > div:nth-child(1) > h2") %>%
