@@ -1,16 +1,20 @@
+# To do:
+# Combine outputs. Track when a person first signs up.
+# Be aware of division changes and open class showing up date of comps.
+# Analysis speed to sign up and comp outcomes (results)
+# Also look at which weight classes sign up for open class (heavier people?)xx
+
 library(rvest)
 library(dplyr)
 library(glue)
-library(RMySQL)
-
-# source("divisions_to_track.R")
 
 get_all_comp_ids <- function() {
   all_comp_urls <- read_html("http://ibjjf.com/championships/calendar/") %>%
     html_nodes("#content > div > table > tbody > tr > td > a") %>%
     html_attr("href")
 
-  sapply(all_comp_urls, get_comp_id)
+ out <- sapply(all_comp_urls, get_comp_id)
+ unique(out)
 }
 
 get_comp_id <- function(comp_url) {
@@ -106,14 +110,20 @@ get_results <- function(comp_id) {
     return(out)
   }) %>% bind_rows()
 }
-
-# Get all ids and get results and competitors
+paste(Sys.time(), "Starting new run...")
+paste(Sys.time(), "Getting list of competition ids...")
 all_comp_ids <- get_all_comp_ids()
 
+paste(Sys.time(), "Getting list of competitors...")
 all_comps <- lapply(all_comp_ids, get_competitors) %>%
   bind_rows()
 
+paste(Sys.time(), "Getting list of results...")
 all_results <- lapply(all_comp_ids, get_results) %>%
   bind_rows()
 
-save(all_comps, all_results, file = "ibjjf_competitors.RData")
+out_file <- glue("data/ibjjf_comp_data_{format(Sys.time(), format = '%Y%m%d_%H%M')}.RData")
+paste(Sys.time(), glue("Saving results to {out_file}..."))
+save(all_comps, all_results, file = out_file)
+
+paste(Sys.time(), "Done!")

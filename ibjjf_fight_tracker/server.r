@@ -20,8 +20,8 @@ clean_table <- function(in_table) {
     select(
       `Fight Time` = fight_time,
       Mat = mat,
-      Phase = phase,
       Competitors,
+      Phase = phase,
       Age,
       Gender,
       Skill,

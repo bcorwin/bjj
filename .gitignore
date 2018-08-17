@@ -4,3 +4,5 @@
 **/*.txt
 **/*.log
 **/*.RData
+
+!ibjjf_fight_tracker/cronjob.txt
